@@ -1,0 +1,20 @@
+#timetable {
+    margin-top: 20px;
+}
+
+#timetable th,
+#timetable td {
+    text-align: center;
+    vertical-align: middle;
+    border: 1px solid #dee2e6;
+    padding: 10px;
+}
+
+#timetable th {
+    background-color: #f8f9fa;
+}
+
+#linksetup {
+    color: black;
+    text-decoration: none;
+}

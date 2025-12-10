@@ -1,0 +1,19 @@
+.reglog_button {
+    background-image: linear-gradient(to right, rgba(54, 147, 255, 1), rgba(95, 110, 248, 1));
+    width: 130px;
+}
+
+.reset_button {
+    background-image: linear-gradient(to right, rgb(232, 131, 131), rgb(250, 58, 58));
+    width: 130px;
+}
+
+.frontimage {
+    width: 300px;
+    height: auto;
+}
+
+.frontimage2 {
+    width: 180px;
+    height: auto;
+}
