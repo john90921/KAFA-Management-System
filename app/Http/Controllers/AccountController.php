@@ -11,6 +11,8 @@ use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\TeacherWelcomeEmail;
 
 class AccountController extends Controller
 {
@@ -24,9 +26,9 @@ class AccountController extends Controller
     // update profile put method
     public function updateProfile(UpdateProfileRequest $request, $id) {
         $user = User::findOrFail($id); // fetch user based on id
-    
+
         $validatedData = $request->validated(); // validate input request
-    
+
         // check user verification existance
         if ($request->hasFile('user_verification')) {
 
@@ -45,7 +47,7 @@ class AccountController extends Controller
         if ($request->filled('new_password')) {
             $user->password = Hash::make($validatedData['new_password']);
         }
-    
+
         // update user data
         $user->update([
             'user_ic' => $validatedData['user_ic'],
@@ -54,7 +56,7 @@ class AccountController extends Controller
             'user_contact' => $validatedData['user_contact'],
             'email' => $validatedData['email'],
         ]);
-    
+
         return redirect()->route('profile')->with('message', 'Successfully Update Profile');
     }
 
@@ -69,6 +71,9 @@ class AccountController extends Controller
 
         // validate input request
         $data = $request->validated();
+
+        // store plain password before hashing to send in email
+        $plainPassword = $data['password'];
 
         // create teacher
         $user = User::create([
@@ -90,7 +95,10 @@ class AccountController extends Controller
             $user->user_verification = $path;
             $user->save();
         }
-        
+
+        // send welcome email with login credentials
+        Mail::to($user->email)->send(new TeacherWelcomeEmail($user, $plainPassword));
+
         return redirect()->route('registerteacher')->with('message', 'Successfully Create Teacher Account');
     }
 
@@ -103,7 +111,7 @@ class AccountController extends Controller
     // createchild post method
     public function createchild(RegisterChildRequest $request) {
         $parent = Auth::user(); // fetch user authentication
-        
+
         $data = $request->validated(); // validate input request
 
         // create child
