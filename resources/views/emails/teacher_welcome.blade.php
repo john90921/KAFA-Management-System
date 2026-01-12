@@ -15,7 +15,7 @@
         }
         .header {
             background-color: #4CAF50;
-            color: white;
+        color: white;
             padding: 20px;
             text-align: center;
             border-radius: 5px 5px 0 0;

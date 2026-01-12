@@ -18,8 +18,8 @@ class ScheduleController extends Controller
     // display classroom in all_class page
     public function allclass() {
         $classes = Classroom::all(); // fetch all classroom
-
-        return view('ManageSchedule.KAFA-Admin.all_class', compact('classes'));
+        $students = Student::all(); // fetch all student
+        return view('ManageSchedule.KAFA-Admin.all_class', compact('classes','students'));
     }
 
     // display class detail in view_classroom
@@ -37,7 +37,7 @@ class ScheduleController extends Controller
                     $query->select('teacher_id')->from('classrooms');
                     })->get(); // fetch registered teacher that not have class yest
 
-        $students = Student::all()->where('classroom_id', null); // fetch all student that not registered into classroom yet 
+        $students = Student::all()->where('classroom_id', null); // fetch all student that not registered into classroom yet
 
         return view('ManageSchedule.KAFA-Admin.add_classroom', compact('teachers', 'students'));
     }
@@ -53,14 +53,14 @@ class ScheduleController extends Controller
                         ->orderBy('activity_date')
                         ->orderBy('activity_starttime')
                         ->get(); // fetch all class activity and order by activity date then activity start time
-    
+
             // transform format
             $activities->transform(function ($activity) {
                 return $this->reformatActivities($activity);
             });
 
             $nextDates = $this->getDates(); // get dates
-    
+
             return view('ManageSchedule.Teacher.class_activity', compact('class', 'activities', 'nextDates'));
         } else {
             return view('ManageSchedule.Teacher.class_activity', compact('class'));
@@ -103,11 +103,11 @@ class ScheduleController extends Controller
         });
 
         $nextDates = $this->getDates(); // get dates
-        
+
         return view('ManageSchedule.Parent.kafa_schedule', compact('activities', 'class', 'nextDates'));
     }
 
-    // reformat activity date, start and end time 
+    // reformat activity date, start and end time
     protected function reformatActivities($activity) {
         // transform format
         $activity->activity_date = Carbon::parse($activity->activity_date)->format('j F Y'); // reformat activity date
@@ -117,7 +117,7 @@ class ScheduleController extends Controller
         return $activity;
     }
 
-    // get 5 days of dates 
+    // get 5 days of dates
     protected function getDates() {
         // get today date
         $todayDate = Carbon::now();
@@ -134,7 +134,7 @@ class ScheduleController extends Controller
     // create classroom post method
     public function createClassroom(CreateClassRequest $request) {
         $data = $request->validated(); // validate the request input
-        
+
         // create classroom
         $class = Classroom::create([
             'class_name' => $data['class_name'],
@@ -152,7 +152,7 @@ class ScheduleController extends Controller
             $student->classroom_id = $class->id; // update student's classroom id to the class id
             $student->save(); // save data in database
         }
-        
+
         return redirect()->route('addclassroom')->with('message', 'Successfully Create New Class');
     }
 
@@ -161,10 +161,10 @@ class ScheduleController extends Controller
 
         try {
             $data = $request->validated(); // validate the request input
-    
+
             $user = Auth::user(); // retrieve authenticated user(teacher)
             $class = Classroom::where('teacher_id', $user->id)->first(); // fetch classroom based on the user(teacher) id
-    
+
             // create activity
             $activity = Activity::create([
                 'classroom_id' => $class->id,
@@ -176,14 +176,14 @@ class ScheduleController extends Controller
                 'activity_endtime' => $data['activity_endtime'],
                 'activity_remarks' => $data['activity_remarks'],
             ]);
-    
+
             $activity->save(); // save activity in database
-    
+
             return redirect()->route('classactivity')->with('message', 'Successfully Create New Activity');
         } catch (\Exception $e) {
             return back()->withInput()->withErrors('error'); // return the error
         }
-        
+
     }
 
     // update class activity put method
@@ -209,7 +209,7 @@ class ScheduleController extends Controller
         } catch (\Exception $e) {
             return back()->withInput()->withErrors('error'); // return the error
         }
-        
+
     }
 
     // delete class activity delete  method
