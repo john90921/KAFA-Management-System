@@ -61,7 +61,7 @@ class User extends Authenticatable
 
     // many to one relationsip with Classroom model
     public function classteacher() {
-        return $this->belongsTo(Classroom::class);
+        return $this->belongsTo(Classroom::class,'id','teacher_id');
     }
 
     // one to many relationsip with Result model

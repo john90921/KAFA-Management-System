@@ -19,9 +19,14 @@ class StudentSeeder extends Seeder
         //
 
         DB::table('students')->insert([
-            ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child1', 'student_ic' => '111111111110', 'student_age' => (int) 11, 'student_gender' => 'Men', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
-            ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child2', 'student_ic' => '222222222220', 'student_age' => (int) 12, 'student_gender' => 'Women', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
-            ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child3', 'student_ic' => '333333333330', 'student_age' => (int) 13, 'student_gender' => 'Men', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
-        ]);
+            ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child1', 'student_ic' => '3223232323', 'student_age' => (int) 11, 'student_gender' => 'Men', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
+            ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child2', 'student_ic' => '23232', 'student_age' => (int) 12, 'student_gender' => 'Women', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
+            ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child3', 'student_ic' => '232323', 'student_age' => (int) 13, 'student_gender' => 'Men', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
+            ]);
+            //  DB::table('students')->insert([
+            // ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child1', 'student_ic' => '111111111110', 'student_age' => (int) 11, 'student_gender' => 'Men', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
+            // ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child2', 'student_ic' => '222222222220', 'student_age' => (int) 12, 'student_gender' => 'Women', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
+            // ['classroom_id' => NULL, 'parent_id' => 3, 'student_name' => 'child3', 'student_ic' => '333333333330', 'student_age' => (int) 13, 'student_gender' => 'Men', 'student_verification' => 'child_ic.pdf', 'created_at' => $now, 'updated_at' => $now],
+            // ]);
     }
 }

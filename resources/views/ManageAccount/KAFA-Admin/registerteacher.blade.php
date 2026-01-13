@@ -9,6 +9,11 @@
             {{ session('message') }}
         </div>
     @endif
+     @if(session('error'))
+        <div class="alert alert-info" id="success-message">
+            {{ session('error') }}
+        </div>
+    @endif
 
         <div class="row justify-content-center mt-3 mb-3">
             <div class="col-md-8">
@@ -60,7 +65,7 @@
                                     </span>
                                 @enderror
                             </div>
-                        </div>                        
+                        </div>
 
                         <div class="row mb-3">
                             <label for="user_contact" class="col-md-4 col-form-label text-md-end">{{ __('Contact') }}</label>
@@ -121,7 +126,7 @@
                                 @enderror
                             </div>
                         </div>
-                        
+
 
                         <div class="row mb-0">
                             <div class="col-md-6 offset-md-4">

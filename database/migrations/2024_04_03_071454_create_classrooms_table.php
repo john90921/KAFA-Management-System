@@ -12,11 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('classrooms', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('teacher_id')->nullable(); // user id of the class teacher
-            $table->string('class_name', 20); // class name
-            $table->string('class_description', 50); // class description
-            $table->timestamps();
+   t
         });
     }
 

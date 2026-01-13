@@ -21,7 +21,7 @@ class Classroom extends Model
     public function teacher() {
         return $this->hasOne(User::class, 'id', 'teacher_id');
     }
-    
+
     // one to many relationsip with Student model
     public function students() {
         return $this->hasMany(Student::class);
