@@ -17,17 +17,29 @@ class ScheduleController extends Controller
 {
     // display classroom in all_class page
     public function allclass() {
-        $classes = Classroom::all(); // fetch all classroom
+        $teachers =User::where("role_id",4)->get();; // fetch all classroom
         $students = Student::all(); // fetch all student
-        return view('ManageSchedule.KAFA-Admin.all_class', compact('classes','students'));
+        $classes = Classroom::all(); // fetch all classroom
+        $assignedTeacher = User::where('role_id', 4)->has('classteacher')->get(); // fetch all assigned teacher
+        $unassignedTeacher = User::where('role_id', 4)->doesntHave('classteacher')->get(); // fetch all unassigned teacher
+        $assignedStudent = Student::whereNotNull('classroom_id')->get(); // fetch all assigned student
+        $unassignedStudent = Student::where('classroom_id', null)->get(); // fetch all unassigned student
+        $dashboardData = [
+            'unassignedTeachers' => $unassignedTeacher,
+            'unassignedStudents' => $unassignedStudent,
+            'assignedTeachers' => $assignedTeacher,
+            'assignedStudents' => $assignedStudent,
+        ];
+
+        return view('ManageSchedule.KAFA-Admin.all_class', compact('dashboardData','classes','students','teachers'));
     }
 
     // display class detail in view_classroom
     public function viewclassroom($id) {
         $class = Classroom::findOrFail($id); // fetch classroom based on the id
         $students = Student::where('classroom_id', $class->id)->get(); // fetch student that are registered in the class
-
-        return view('ManageSchedule.KAFA-Admin.view_classroom', compact('class', 'students'));
+        $teachers = User::where('id', $class->teacher_id)->first(); // fetch teacher that teach the class
+        return view('ManageSchedule.KAFA-Admin.view_classroom', compact('class', 'students', 'teachers'));
     }
 
     // display add_classroom form page
