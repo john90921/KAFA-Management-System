@@ -36,6 +36,8 @@ class ResultController extends Controller
         $subjects = Subject::all();
         $subject = $request->subject_name;
         $students = collect(); // Define an empty collection by default
+        $existingResults = collect(); // Collection to store existing results
+        $statistics = null; // Performance statistics
 
         // Check if the subject is one of the specified subjects
         if (
@@ -49,11 +51,32 @@ class ResultController extends Controller
                 $subsid = Subject::where('subject_name', $subject)->first();
                 $students = Student::where('classroom_id', $class->id)->get();
 
-                return view('ManageResult.Teacher.add_result', compact('assessment', 'subjects', 'students', 'subsid'));
+                // Get existing results for this assessment and subject
+                if ($subsid) {
+                    $existingResults = Result::where('examination_id', $assessid)
+                        ->where('subject_id', $subsid->id)
+                        ->with('studentresult')
+                        ->get()
+                        ->keyBy('student_id'); // Key by student_id for easy lookup
+
+                    // Calculate performance statistics if results exist
+                    if ($existingResults->isNotEmpty()) {
+                        $marks = $existingResults->pluck('result_marks')->filter()->values();
+                        
+                        $statistics = [
+                            'class_average' => $marks->avg(),
+                            'highest_mark' => $marks->max(),
+                            'lowest_mark' => $marks->min(),
+                            'total_students' => $existingResults->count(),
+                        ];
+                    }
+                }
+
+                return view('ManageResult.Teacher.add_result', compact('assessment', 'subjects', 'students', 'subsid', 'existingResults', 'statistics'));
             }
         }
 
-        return view('ManageResult.Teacher.add_result', compact('assessment', 'subjects', 'students'));
+        return view('ManageResult.Teacher.add_result', compact('assessment', 'subjects', 'students', 'existingResults', 'statistics'));
     }
 
     // Store the added results into the database
@@ -107,6 +130,7 @@ class ResultController extends Controller
         $subjects = Subject::all();
         $subject = $request->subject_name;
         $students = collect(); // Define an empty collection by default
+        $statistics = null; // Performance statistics
 
         // Check if the subject is one of the specified subjects
         if (
@@ -123,11 +147,23 @@ class ResultController extends Controller
                 // Get the results for the assessment and subject
                 $results = Result::where('examination_id', $assessment->id)->where('subject_id', $subsid->id)->get();
 
-                return view('ManageResult.Teacher.edit_result', compact('assessment', 'subjects', 'students', 'subsid', 'results'));
+                // Calculate performance statistics
+                if ($results->isNotEmpty()) {
+                    $marks = $results->pluck('result_marks')->filter()->values();
+                    
+                    $statistics = [
+                        'class_average' => $marks->avg(),
+                        'highest_mark' => $marks->max(),
+                        'lowest_mark' => $marks->min(),
+                        'total_students' => $results->count(),
+                    ];
+                }
+
+                return view('ManageResult.Teacher.edit_result', compact('assessment', 'subjects', 'students', 'subsid', 'results', 'statistics'));
             }
         }
 
-        return view('ManageResult.Teacher.edit_result', compact('assessment', 'subjects', 'students'));
+        return view('ManageResult.Teacher.edit_result', compact('assessment', 'subjects', 'students', 'statistics'));
     }
 
     // Store the updated results into the database
@@ -227,24 +263,57 @@ class ResultController extends Controller
     // Display the result slip for a student based on the selected session year and exam type
     public function resultslip(Request $request)
     {
-        // Find the student
+        $parent = Auth::user();
+        
+        // Find the student and verify it belongs to the logged-in parent
         $student = Student::with('classroom')->findOrFail($request->student_name);
+        
+        // Security check: Ensure the student belongs to the logged-in parent
+        if ($student->parent_id != $parent->id) {
+            return redirect()->route('selectresultinfo')->with('error', 'You are not authorized to view this student\'s results.');
+        }
 
         // Find the examination based on session year and exam type
         $examination = Examination::where('school_session', $request->school_session)
             ->where('exam_type', $request->exam_type)
-            ->firstOrFail();
+            ->first();
 
-        // Find the results for the student and examination, including subject information
+        if (!$examination) {
+            return redirect()->route('selectresultinfo')
+                ->with('error', 'Examination not found. Please check the session year and assessment type.');
+        }
+
+        // Find only APPROVED results for the student and examination, including subject information
         $results = Result::where('student_id', $student->id)
             ->where('examination_id', $examination->id)
+            ->where('result_status', 'Approved') // Only show approved results
             ->with('subject')
+            ->orderBy('subject_id')
+            ->get();
+
+        // Debug: Check all results to provide helpful error message
+        $allResults = Result::where('student_id', $student->id)
+            ->where('examination_id', $examination->id)
             ->get();
 
         if ($results->isNotEmpty()) {
-            return view('ManageResult.Parent.result_slip', ['student' => $student, 'results' => $results]);
+            return view('ManageResult.Parent.result_slip', [
+                'student' => $student, 
+                'results' => $results,
+                'examination' => $examination
+            ]);
         } else {
-            return redirect()->route('result')->with('error', 'Result not found');
+            // Provide detailed error message
+            if ($allResults->isEmpty()) {
+                $errorMsg = 'No results have been entered for this student and examination yet.';
+            } else {
+                $statusCounts = $allResults->groupBy('result_status')->map->count();
+                $statuses = $statusCounts->keys()->implode(', ');
+                $errorMsg = "Found {$allResults->count()} result(s) but none are approved. Current status: {$statuses}. Please wait for KAFA Admin to approve the results.";
+            }
+            
+            return redirect()->route('selectresultinfo')
+                ->with('error', $errorMsg);
         }
     }
 

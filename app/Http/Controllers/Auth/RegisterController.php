@@ -55,7 +55,7 @@ class RegisterController extends Controller
             'contact' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
-            'ic_docs' => ['required', 'pdf', 'max:10240'],
+            'ic_docs' => ['required', 'mimes:pdf', 'max:10240'],
         ]);
     }
 
@@ -68,6 +68,14 @@ class RegisterController extends Controller
     protected function create(array $data)
     {
         $contact = (int) $data['contact'];
+        $verificationPath = 'path'; // 默认路径
+
+        // 处理文件上传
+        if (request()->hasFile('ic_docs')) {
+            $file = request()->file('ic_docs');
+            $fileName = $file->getClientOriginalName();
+            $verificationPath = $file->storeAs('Parent Verification', $fileName, 'public');
+        }
 
         $user = User::create([
             'role_id' => 3,
@@ -77,16 +85,8 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
             'user_gender' => $data['gender'],
             'user_contact' => $contact,
-            'user_verification' => isset($path) ? $path : 'path',
+            'user_verification' => $verificationPath,
         ]);
-
-        if (request()->hasFile('ic_docs')) {
-            $file = request()->file('ic_docs');
-            $fileName = $file->getClientOriginalName();
-            $path = $file->storeAs('Parent Verification', $fileName, 'public');
-            $user->user_verification = $path;
-            $user->save();
-        }
 
         return $user;
     }
