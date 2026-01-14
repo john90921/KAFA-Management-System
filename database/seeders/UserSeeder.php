@@ -15,12 +15,64 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         $now = now();
-        //
+        
+        // Default accounts for each role type
+        // All accounts use password: "password123"
+        $defaultPassword = Hash::make('password123');
+        
         DB::table('users')->insert([
-            ['role_id' => '1', 'user_name' => 'afiq', 'user_ic' => '111111111111', 'email' => '1@gmail.com', 'password' => Hash::make('11111111'), 'user_gender' => 'Men', 'user_contact' => '0111111111', 'user_verification' => 'testing.pdf', 'created_at' => $now, 'updated_at' => $now],
-            ['role_id' => '2', 'user_name' => 'farisha', 'user_ic' => '222222222222', 'email' => '2@gmail.com', 'password' => Hash::make('22222222'), 'user_gender' => 'Women', 'user_contact' => '0222222222', 'user_verification' => 'testing.pdf', 'created_at' => $now, 'updated_at' => $now],
-            ['role_id' => '3', 'user_name' => 'adriana', 'user_ic' => '333333333333', 'email' => '3@gmail.com', 'password' => Hash::make('33333333'), 'user_gender' => 'Women', 'user_contact' => '0333333333', 'user_verification' => 'testing.pdf', 'created_at' => $now, 'updated_at' => $now],
-            ['role_id' => '4', 'user_name' => 'warsena', 'user_ic' => '444444444444', 'email' => '4@gmail.com', 'password' => Hash::make('44444444'), 'user_gender' => 'Women', 'user_contact' => '0444444444', 'user_verification' => 'testing.pdf', 'created_at' => $now, 'updated_at' => $now],
+            // MUIP Administrator (Role ID: 1)
+            [
+                'role_id' => 1,
+                'user_name' => 'MUIP Administrator',
+                'user_ic' => '100000000001',
+                'email' => 'muip.admin@kafa.test',
+                'password' => $defaultPassword,
+                'user_gender' => 'Men',
+                'user_contact' => '0100000001',
+                'user_verification' => 'default.pdf',
+                'created_at' => $now,
+                'updated_at' => $now
+            ],
+            // KAFA Administrator (Role ID: 2)
+            [
+                'role_id' => 2,
+                'user_name' => 'KAFA Administrator',
+                'user_ic' => '200000000002',
+                'email' => 'kafa.admin@kafa.test',
+                'password' => $defaultPassword,
+                'user_gender' => 'Women',
+                'user_contact' => '0200000002',
+                'user_verification' => 'default.pdf',
+                'created_at' => $now,
+                'updated_at' => $now
+            ],
+            // Parent (Role ID: 3)
+            [
+                'role_id' => 3,
+                'user_name' => 'Test Parent',
+                'user_ic' => '300000000003',
+                'email' => 'parent@kafa.test',
+                'password' => $defaultPassword,
+                'user_gender' => 'Women',
+                'user_contact' => '0300000003',
+                'user_verification' => 'default.pdf',
+                'created_at' => $now,
+                'updated_at' => $now
+            ],
+            // Teacher (Role ID: 4)
+            [
+                'role_id' => 4,
+                'user_name' => 'Test Teacher',
+                'user_ic' => '400000000004',
+                'email' => 'teacher@kafa.test',
+                'password' => $defaultPassword,
+                'user_gender' => 'Men',
+                'user_contact' => '0400000004',
+                'user_verification' => 'default.pdf',
+                'created_at' => $now,
+                'updated_at' => $now
+            ],
         ]);
     }
 }

@@ -78,7 +78,13 @@
                                         <td>{{ $result->studentresult->classroom->class_name }}</td>
                                         <td>{{ $result->subject->subject_name }}</td>
                                         <td>
-                                        {{$result->result_status}}
+                                            <span class="badge text-white
+                                                @if($result->result_status == 'Approved') bg-success
+                                                @elseif($result->result_status == 'Rejected') bg-danger
+                                                @else bg-warning text-dark
+                                                @endif" style="font-size: 0.9em; padding: 0.4em 0.6em;">
+                                                {{ $result->result_status }}
+                                            </span>
                                         </td>
                                         <td>
                                             <a href="{{ route('studentlistreview', ['result_id' => $result->id]) }}" class="btn btn-outline-primary btn-sm">View</a>

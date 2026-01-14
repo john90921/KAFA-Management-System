@@ -53,9 +53,13 @@
                                     </td>
                                     <td>
                                         <a href="{{ route('displayResult', ['assessid' => $assessment->id]) }}"
-                                            class="btn btn-primary">Add</a>
+                                            class="btn btn-primary btn-sm">Add</a>
                                         <a href="{{ route('updateResult', ['assessid' => $assessment->id]) }}"
-                                            class="btn btn-primary">Edit</a>
+                                            class="btn btn-warning btn-sm">Edit</a>
+                                        @if($assessment->results->isNotEmpty())
+                                            <a href="{{ route('viewResults', ['assessid' => $assessment->id]) }}"
+                                                class="btn btn-info btn-sm">View</a>
+                                        @endif
                                     </td>
                                 </tr>
 

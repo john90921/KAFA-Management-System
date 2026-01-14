@@ -46,10 +46,10 @@
                                 <label for="gender" class="col-md-4 col-form-label text-md-end">{{ __('Gender') }}</label>
 
                                 <div class="col-md-6">
-                                    <select id="gender" name="gender" class="form-select" aria-label="Default select example">
-                                        <option selected value="null">Select</option>
-                                        <option value="Men">Men</option>
-                                        <option value="Women">Women</option>
+                                    <select id="gender" name="gender" class="form-select @error('gender') is-invalid @enderror" aria-label="Default select example" required>
+                                        <option value="" {{ old('gender') == '' ? 'selected' : '' }}>Select</option>
+                                        <option value="Men" {{ old('gender') == 'Men' ? 'selected' : '' }}>Men</option>
+                                        <option value="Women" {{ old('gender') == 'Women' ? 'selected' : '' }}>Women</option>
                                     </select>
 
                                     @error('gender')

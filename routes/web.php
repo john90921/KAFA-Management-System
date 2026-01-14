@@ -74,6 +74,7 @@ Route::group(['middleware' => 'role:2'], function () {
     Route::get('/studentlistreview/{result_id}', [ResultController::class, 'studentListReview'])->name('studentlistreview');
     Route::post('/updateapproval', [ResultController::class, 'updateApproval'])->name('updateapproval');
     Route::post('/deleteapproval', [ResultController::class, 'deleteapproval'])->name('deleteapproval');
+    Route::post('/bulk_approve', [ResultController::class, 'bulkApprove'])->name('bulkApprove');
 });
 
 // Route for Parent
@@ -105,6 +106,8 @@ Route::group(['middleware' => 'role:4'], function () {
     Route::get('/assessment_details', [ResultController::class, 'assessmentdetails'])->name('assessmentdetails');
     Route::get('/add_result/{assessid}', [ResultController::class, 'displayResult'])->name('displayResult');
     Route::post('/add_result/{assessid}', [ResultController::class, 'addResult'])->name('addResult');
+    Route::post('/import_results/{assessid}', [ResultController::class, 'importResults'])->name('importResults');
+    Route::get('/view_results/{assessid}', [ResultController::class, 'viewResults'])->name('viewResults');
     Route::get('/editResult/{assessid}', [ResultController::class, 'updateResult'])->name('updateResult');
     Route::put('/editResult/{assessid}', [ResultController::class, 'editResult'])->name('editResult');
 });

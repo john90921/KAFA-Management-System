@@ -29,12 +29,20 @@ class LoginController extends Controller
     }
 
     /**
+<<<<<<< HEAD
+     * Get the login username to be used by the controller.
+     *
+     * @return string
+=======
      * Override username to use user_ic instead of email
+>>>>>>> ca153fa75f3e26a9b86fd114a2fc06a15b34278f
      */
     public function username()
     {
         return 'user_ic';
     }
+<<<<<<< HEAD
+=======
 
     /**
      * Optional: override login to show correct error message
@@ -51,4 +59,5 @@ class LoginController extends Controller
     {
         return $request->only('user_ic', 'password');
     }
+>>>>>>> ca153fa75f3e26a9b86fd114a2fc06a15b34278f
 }
